@@ -9,7 +9,11 @@ import Root from "./routes/root";
 import Welcome from "./routes/welcome";
 import Login from "./routes/login";
 import Dashboard from "./routes/dashboard";
-
+import Add from "./routes/add";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Edit from "./routes/edit";
+import Addchapter from "./routes/addchapter";
+import Test from "./routes/test";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -18,7 +22,19 @@ const router = createBrowserRouter([
       {
         path:"/:role/dashboard",
         element: <Dashboard></Dashboard>
-      }
+      },
+      {
+        path: "/add",
+        element: <Add></Add>
+      },
+      ,  {
+        path: "/:mangaId/edit",
+        element: <Edit></Edit>
+      }, 
+      ,  {
+        path: "/:mangaId/edit/add-chapter",
+        element: <Addchapter></Addchapter>
+      }, 
     ]
   },
   {
@@ -27,7 +43,11 @@ const router = createBrowserRouter([
   },  {
     path: "/login",
     element: <Login></Login>
-  },
+  }, 
+  ,  {
+    path: "/test",
+    element: <Test></Test>
+  }, 
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

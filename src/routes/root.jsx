@@ -9,7 +9,7 @@ export default function Root() {
 
                 <ul>
                     <li>
-                        <Link to={"/"}>Dashboard</Link>
+                        <Link to={"/1/dashboard"}>Dashboard</Link>
                     </li>
                     <li>
                     <Link to={"/"}>Upload</Link>

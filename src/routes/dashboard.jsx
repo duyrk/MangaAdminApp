@@ -1,5 +1,5 @@
 import React from 'react'
-import MangaInfoItem from './mangaInfoItem'
+import MangaInfoItem from './items/mangaInfoItem'
 const data =[
     {
         "_id":"1",
