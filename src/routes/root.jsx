@@ -12,7 +12,7 @@ export default function Root() {
                         <Link to={"/1/dashboard"}>Dashboard</Link>
                     </li>
                     <li>
-                    <Link to={"/"}>Upload</Link>
+                    <Link to={"/add"}>Upload</Link>
                     </li>
                     <li>
                     <Link to={"/"}>Team Management</Link>

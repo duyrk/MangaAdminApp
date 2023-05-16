@@ -1,28 +1,34 @@
 section{
     padding: 2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
 }
-label{
+.testLabel{
     margin: 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px dotted black;
+    border: 1px dotted white;
     border-radius:20px ;
     width: 10rem;
     height: 10rem;
     cursor: pointer;
     font-size: large;
+    margin-bottom: 20px;
 }
-label span{
+.testLabel span{
     font-weight: lighter;
     font-size: small;
     padding-top: 0.5rem;
+ 
 }
-input{
+.testInput{
     display: none;
 }
-img{
+.testImg{
     padding:0;
     margin: 0;
 }
@@ -32,4 +38,18 @@ img{
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+}
+.image{
+    position: relative;
+    background-color: rgb(130, 127, 127);
+    margin: 5px 20px;
+    text-align: center;
+}
+.image p {
+    margin: 0;
+}
+.deleteButton{
+    position: absolute;
+    background-color: red;
+    color: white;
 }

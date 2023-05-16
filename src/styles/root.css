@@ -113,8 +113,14 @@ padding: 1.5% 5%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: white;
     height: auto;
+    padding:15px 0px
+}
+.addContainer h2{
+    color: white;
+}
+.addContainer .control-label{
+color: white;
 }
 .addContainer div{
     width: 100%;
@@ -168,10 +174,14 @@ padding: 1.5% 5%;
 }
 .addChapter-container{
 color: white;
+padding: 15px 0px
 }
 .addChapter-label{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+.css-13cymwt-control{
+    flex-direction: row !important;
 }

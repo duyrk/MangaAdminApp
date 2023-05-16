@@ -1,6 +1,6 @@
 import '../styles/test.css'
 import React, { useState } from 'react'
-
+import { SortableList } from '@thaddeusjiang/react-sortable-list';
 function Test() {
     const [selectedImages, setselectedImages] = useState([])
     const onSelectFile = (event) =>{
@@ -20,19 +20,20 @@ function Test() {
   
   return (
     <section>
-        <label >
+        <label className='testLabel'>
             + Add Images
             <span>up to 10 images</span>
        
-        <input type='file' name='images' onChange={onSelectFile} multiple accept='image/png, image/jpeg, image/webp, image/jpg'></input>
+        <input className='testInput' type='file' name='images' onChange={onSelectFile} multiple accept='image/png, image/jpeg, image/webp, image/jpg'></input>
         </label>
         <div className="images">
+            
             {
                 selectedImages &&
                 selectedImages.map((item, index)=>{
                     return(
                         <div key={item} className='image'>
-                            <img src={item} alt="" height={200}/>
+                            <img className='testImg' src={item} alt="" height={200}/>
                             <button onClick={()=>setselectedImages(selectedImages.filter((e)=>e!==item))}>delete image</button>
                             {/* set lại list đã được lọc qua filter. List là các object lại khác với object bắn event vào. */}
                             <p>{index+1}</p>
@@ -40,6 +41,7 @@ function Test() {
                     )
                 })
             }
+      
         </div>
     </section>
   )

@@ -14,11 +14,14 @@
     "@emotion/styled": "^11.10.8",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.2",
+    "@thaddeusjiang/react-sortable-list": "^0.1.1",
     "bootstrap": "^5.2.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.10.0"
+    "react-multi-select-component": "^4.3.4",
+    "react-router-dom": "^6.10.0",
+    "react-select": "^5.7.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
