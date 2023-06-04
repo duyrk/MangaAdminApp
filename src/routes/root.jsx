@@ -15,7 +15,10 @@ export default function Root() {
                     <Link to={"/add"}>Upload</Link>
                     </li>
                     <li>
-                    <Link to={"/"}>Team Management</Link>
+                    <Link to={"/feature"}>Feature Upload</Link>
+                    </li>
+                    <li>
+                    <Link to={"/"}>User Management</Link>
                     </li>
                 </ul>
             </div>
@@ -24,17 +27,7 @@ export default function Root() {
                     <h2>Hi, Raiko</h2>
                     <Link><h2 className="logout">Log out</h2></Link>
                 </div>
-                <Form className="searchForm" role="search">
-                    <div>
-                        <img src="../assets/ic_search.png" alt="searchImg" />
-                    </div>
-                    <input type="search"
-                        id="q"
-                        name="q"
-                        placeholder="Search..."
-
-                    />
-                </Form>
+          
                 <div className="pageContainer">
                     <Outlet></Outlet>
                 </div>

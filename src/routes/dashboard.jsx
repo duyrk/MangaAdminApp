@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import MangaInfoItem from './items/mangaInfoItem'
+import { Form } from 'react-router-dom'
+import { useStateManager } from 'react-select'
 const data =[
     {
         "_id":"1",
@@ -50,10 +52,21 @@ const data =[
     }
 ]
 export default function Dashboard() {
+    const [mangaData, setmangaData] = useState(data)
+    const handleSearch = (e) =>{
+        console.log(e.target.value);
+        //handle search here
+    }
   return (
     <div className='dashboard'>
+             <Form className="searchForm" role="search">
+        <div>
+          <img src="../assets/ic_search.png" alt="searchImg" />
+        </div>
+        <input type="search" id="q" name="q" placeholder="Search..." onChange={handleSearch}/>
+      </Form>
         {
-            data.map(item=><MangaInfoItem></MangaInfoItem>)
+            mangaData.map(item=><MangaInfoItem></MangaInfoItem>)
         }
  
     </div>

@@ -2,10 +2,11 @@
 import { Button, ThemeProvider } from '@mui/material';
 import React, { useState } from 'react'
 import { Form as BoostForm } from 'react-bootstrap';
-import { Form } from 'react-router-dom';
+import { Form, Link } from 'react-router-dom';
 import { myTheme } from "../assets/MyTheme"
 import ChapterItem from './items/chapterItem';
 import { MultiSelect } from 'react-multi-select-component';
+import CharacterItem from './items/characterItem';
 const options = [
     { value: 'Action', label: 'Action' },
     { value: 'Romance', label: 'Romance' },
@@ -104,12 +105,15 @@ function Edit() {
         console.log(e.target.value);
         setstatus(e.target.value);
       }
+      function Submit(){
+        console.log("submited")
+      }
     return (
         <div className='editContainer'>
   
                 <div className='addContainer'>
                     <h2>Edit Manga</h2>
-                    <Button sx={{ width: "15%", alignSelf: "flex-end" }} type="submit" variant="contained">Submit</Button>
+                    <Button sx={{ width: "15%", alignSelf: "flex-end" }} type="button" variant="contained" onClick={Submit}>Submit</Button>
                     <img className='manga-cover' src={file} />
 
                     <BoostForm.Group controlId="formFile" className="mb-3">
@@ -118,23 +122,23 @@ function Edit() {
                     </BoostForm.Group>
                     <BoostForm.Group className="mb-3">
                         <BoostForm.Label  className='control-label'>Manga Name:</BoostForm.Label>
-                        <BoostForm.Control type="text" placeholder="Name..." />
+                        <BoostForm.Control type="text" placeholder="Name..." onChange={handleName}/>
                     </BoostForm.Group>
                     <BoostForm.Group className="mb-3">
                         <BoostForm.Label  className='control-label'>Author Name:</BoostForm.Label>
-                        <BoostForm.Control type="text" placeholder="Author..." />
+                        <BoostForm.Control type="text" placeholder="Author..." onChange={handleauthor} />
                     </BoostForm.Group>
                     <BoostForm.Group className="mb-3">
                         <BoostForm.Label  className='control-label'>Manga Status:</BoostForm.Label>
-                        <BoostForm.Select aria-label="Default select example">
+                        <BoostForm.Select aria-label="Default select example" onChange={handlestatus}>
                             <option>Status</option>
-                            <option value="1">On Going</option>
-                            <option value="2">Finished</option>
-                            <option value="3">Canceled</option>
+                            <option value="On Going">On Going</option>
+                            <option value="Finished">Finished</option>
+                            <option value="Canceled">Canceled</option>
                         </BoostForm.Select>
                     </BoostForm.Group >
                     <BoostForm.Group className="mb-3">
-        <BoostForm.Label  className='control-label'>Manga Status:</BoostForm.Label>
+        <BoostForm.Label  className='control-label'>Manga Genre:</BoostForm.Label>
         <MultiSelect
           options={options}
           value={selectedOptions}
@@ -144,6 +148,20 @@ function Edit() {
         </MultiSelect>
       </BoostForm.Group >
 
+                </div>
+                <div className='characterContainer'>
+                    <div className='characterSection'>
+                        <h3>Characters</h3>
+                        <button className="add_genre_button">
+        <Link to={"/"}>Add Characters</Link>
+      </button>
+                    </div>
+                    <div className='characterItemContainer'>
+                    <CharacterItem></CharacterItem>
+                 <CharacterItem></CharacterItem>
+                 <CharacterItem></CharacterItem>
+                    </div>
+               
                 </div>
             <div className='chapter-container'>
                 <Form className="searchForm" role="search">

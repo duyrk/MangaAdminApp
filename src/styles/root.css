@@ -185,3 +185,77 @@ padding: 15px 0px
 .css-13cymwt-control{
     flex-direction: row !important;
 }
+.featureContainer{
+    color: white;
+    text-align: center;
+    height: "100%";
+
+}
+.genreContainer{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.genreItem{
+    position: relative;
+    width: 50%;
+    border: 1px solid white;
+    border-radius: 8px;
+    margin-top: 20px;
+    padding: 0 20px
+}
+.deleteButton1{
+    position: absolute;
+    right: 10px;
+    top: 0;
+    color: red;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+}
+.add_genre_button i{
+    text-decoration: none;
+
+}
+.add-genrecontainer{
+    color: white;
+  display: flex;
+  flex-direction: column;
+
+}
+.add-genrecontainer h2{
+ text-align: center;
+}
+.characterContainer{
+    border-bottom: 1px solid white;
+    border-top: 1px solid white;;
+    padding: 0 0 10px 0;
+
+}
+.characterSection{
+    margin-top: 10px;
+    display: flex;
+    color: white;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.characterSection button{
+    
+}
+.characterItemContainer{
+    display: flex;
+    flex-wrap: wrap;
+}
+.characterItem{
+    display: flex;
+    width: 50%;
+    color: white;
+    margin-top: 20px;
+}
+.characterInfo{
+    margin-left: 10px;
+}
+.characterInfo div:first-child{
+    color: rgb(110, 197, 241);
+}
