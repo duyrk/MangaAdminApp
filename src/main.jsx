@@ -13,6 +13,9 @@ import Addchapter from "./routes/addchapter";
 import Test from "./routes/test";
 import Feature from "./routes/feature";
 import AddGenre from "./routes/addGenre";
+import Character from "./routes/character";
+import AddCharacter from "./routes/addCharacter";
+import EditCharacter from "./routes/editcharacter";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -33,7 +36,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/:mangaId/edit/characters",
-        element: <Edit></Edit>,
+        element: <Character></Character>,
+      },
+      {
+        path: "/:mangaId/edit/characters/:characterId/edit",
+        element: <EditCharacter></EditCharacter>,
+      },
+      {
+        path: "/:mangaId/edit/characters/add",
+        element: <AddCharacter></AddCharacter>,
       },
       ,
       {

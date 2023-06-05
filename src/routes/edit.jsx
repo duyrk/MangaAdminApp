@@ -153,7 +153,7 @@ function Edit() {
                     <div className='characterSection'>
                         <h3>Characters</h3>
                         <button className="add_genre_button">
-        <Link to={"/"}>Add Characters</Link>
+        <Link to={"/1/edit/characters"}>Add Characters</Link>
       </button>
                     </div>
                     <div className='characterItemContainer'>

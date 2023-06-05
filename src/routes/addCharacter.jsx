@@ -1,3 +1,4 @@
+
 import { Button, ThemeProvider } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { Form as BoostForm } from 'react-bootstrap';
@@ -10,9 +11,7 @@ const options = [
   { value: 'Romance', label: 'Romance' },
   { value: 'Comedy', label: 'Comedy' },
 ];
-
-// Fetch data from url and set data on this page
-function EditCharacter() {
+function AddCharacter() {
   const [file, setFile] = useState();
   const [selectedOptions, setselectedOptions] = useState([])
   const [name, setname] = useState("")
@@ -30,11 +29,11 @@ function EditCharacter() {
   }
   function handleDescription(e){
     setauthor(e.target.value);
-    console.log(e.target.value)
   }
+
   return (
     <div className='addContainer'>
-      <h2>Edit Character</h2>
+      <h2>Add Character</h2>
       <img className='manga-cover' src={file} />
 
 
@@ -57,4 +56,4 @@ function EditCharacter() {
   )
 }
 
-export default EditCharacter
+export default AddCharacter
