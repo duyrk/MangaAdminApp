@@ -1,7 +1,8 @@
 import { Button } from '@mui/material'
 import React from 'react'
 
-function MangaInfoItem() {
+function MangaInfoItem(props) {
+  const {data} = props
   return (
 
     <div className='itemContainer-info'>

@@ -17,11 +17,7 @@ function Add() {
   const [name, setname] = useState("")
   const [author, setauthor] = useState("")
   const [status, setstatus] = useState("")
-  
-  useEffect(() => {
-
-    console.log(selectedOptions)
-  }, [selectedOptions])
+  const [language, setlanguage] = useState("")  
 
   function handleChange(e) {
     console.log(e.target.files);
@@ -33,6 +29,9 @@ function Add() {
   }
   function handleauthor(e){
     setauthor(e.target.value);
+  }
+  function handlelanguage(e){
+    setlanguage(e.target.value);
   }
   function handlestatus(e){
     console.log(e.target.value);
@@ -55,6 +54,10 @@ function Add() {
       <BoostForm.Group className="mb-3">
         <BoostForm.Label  className='control-label'>Author Name:</BoostForm.Label>
         <BoostForm.Control type="text" placeholder="Author..." onChange={handleauthor}/>
+      </BoostForm.Group>
+      <BoostForm.Group className="mb-3">
+        <BoostForm.Label  className='control-label'>Language:</BoostForm.Label>
+        <BoostForm.Control type="text" placeholder="Language..." onChange={handlelanguage}/>
       </BoostForm.Group>
       <BoostForm.Group className="mb-3">
         <BoostForm.Label className='control-label'>Manga Status:</BoostForm.Label>

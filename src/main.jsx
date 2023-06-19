@@ -22,43 +22,43 @@ const router = createBrowserRouter([
     element: <Root></Root>,
     children: [
       {
-        path: "/:role/dashboard",
+        path: "/cpanel/user/:id/dashboard",
         element: <Dashboard></Dashboard>,
       },
       {
-        path: "/add",
+        path: "/cpanel/manga/add",
         element: <Add></Add>,
       },
-      ,
       {
-        path: "/:mangaId/edit",
+        path: "/cpanel/manga/:mangaId/edit",
         element: <Edit></Edit>,
       },
       {
-        path: "/:mangaId/edit/characters",
+        path: "/cpanel/manga/:mangaId/edit/characters",
         element: <Character></Character>,
       },
       {
-        path: "/:mangaId/edit/characters/:characterId/edit",
+        path: "/cpanel/manga/:mangaId/edit/characters/:characterId/edit",
         element: <EditCharacter></EditCharacter>,
       },
       {
-        path: "/:mangaId/edit/characters/add",
+        path: "/cpanel/manga/:mangaId/edit/characters/add",
         element: <AddCharacter></AddCharacter>,
       },
-      ,
       {
-        path: "/:mangaId/edit/add-chapter",
+        path: "/cpanel/manga/:mangaId/edit/add-chapter",
         element: <Addchapter></Addchapter>,
       },
-      ,
       {
         path: "/feature",
         element: <Feature></Feature>,
       },
-      ,
       {
-        path: "/genre/add",
+        path: "cpanel/genre/add",
+        element: <AddGenre></AddGenre>,
+      },
+      {
+        path: "cpanel/genre/:id/genre",
         element: <AddGenre></AddGenre>,
       },
     ],
@@ -71,7 +71,6 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login></Login>,
   },
-  ,
   {
     path: "/test",
     element: <Test></Test>,
