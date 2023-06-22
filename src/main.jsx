@@ -16,6 +16,7 @@ import AddGenre from "./routes/addGenre";
 import Character from "./routes/character";
 import AddCharacter from "./routes/addCharacter";
 import EditCharacter from "./routes/editcharacter";
+import EditChapter from "./routes/editChapter";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: "/cpanel/manga/:mangaId/edit/add-chapter",
         element: <Addchapter></Addchapter>,
+      },
+      {
+        path: "/cpanel/manga/:mangaId/edit/chapter/:chapterId",
+        element: <EditChapter></EditChapter>
       },
       {
         path: "/feature",

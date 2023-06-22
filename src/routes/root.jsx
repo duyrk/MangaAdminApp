@@ -9,10 +9,10 @@ export default function Root() {
 
                 <ul>
                     <li>
-                        <Link to={"/1/dashboard"}>Dashboard</Link>
+                        <Link to={"/cpanel/user/1/dashboard"}>Dashboard</Link>
                     </li>
                     <li>
-                    <Link to={"/add"}>Upload</Link>
+                    <Link to={"/cpanel/manga/add"}>Upload</Link>
                     </li>
                     <li>
                     <Link to={"/feature"}>Feature Upload</Link>
