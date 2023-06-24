@@ -17,13 +17,16 @@ import Character from "./routes/character";
 import AddCharacter from "./routes/addCharacter";
 import EditCharacter from "./routes/editcharacter";
 import EditChapter from "./routes/editChapter";
+import { Provider } from "react-redux";
+import { store } from "./assets/redux/store";
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Root></Root>,
     children: [
       {
-        path: "/cpanel/user/:id/dashboard",
+        path: "/cpanel/dashboard",
         element: <Dashboard></Dashboard>,
       },
       {
@@ -83,7 +86,9 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+<Provider store={store}>
+<RouterProvider router={router} />
+</Provider>
+    
+
 );
