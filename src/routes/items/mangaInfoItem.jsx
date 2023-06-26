@@ -2,7 +2,7 @@ import { Button } from '@mui/material'
 import React from 'react'
 
 function MangaInfoItem(props) {
-  const {data} = props
+  const {data} = props;
   return (
 
     <div className='itemContainer-info'>
@@ -11,15 +11,15 @@ function MangaInfoItem(props) {
       </div>
       <div className='infoContainer'>
           <div>
-            <h4>Name: Nisekoi</h4>
-            <h4>Author: Komi Naoshi</h4>
-            <h4>Status: Finished</h4>
-            <h4>Like: 2951</h4>
-            <h4>Views: 9,804,536</h4>
+            <h4>Name: {data.name}</h4>
+            <h4>Author: {data.author}</h4>
+            <h4>Status: {data.status}</h4>
+            <h4>Like: {data.likes}</h4>
+            <h4>Views: {data.views}</h4>
           </div>
           <div>
-          <h4>Uploader: Admin Team</h4>
-            <h4>Lastest Chapter: 229.6</h4>
+          <h4>Uploader: {data.uploader.name}</h4>
+            <h4>Lastest Chapter: {data.chapter.length > 0 ? data.chapter[0].chapter_number : 0}</h4>
           
            
           </div>
