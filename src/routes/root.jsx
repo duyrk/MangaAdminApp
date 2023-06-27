@@ -32,7 +32,7 @@ export default function Root() {
                     <Link to={"/cpanel/manga/add"}>Upload</Link>
                     </li>
                     <li>
-                    <Link to={"/feature"}>Feature Upload</Link>
+                    <Link to={"/cpanel/genre"}>Feature Upload</Link>
                     </li>
                     <li>
                     <Link to={"/"}>User Management</Link>

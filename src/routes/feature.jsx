@@ -1,53 +1,86 @@
-import React from "react";
-import { Form, Link } from "react-router-dom";
-const data = [
-  {
-    id: "1",
-    name: "Action",
-    description:
-      " a film genre in which the protagonist is thrust into a series of events that typically involve violence and physical feats.",
-  },
-  {
-    id: "2",
-    name: "Romance",
-    description:
-      "involve romantic love stories recorded in visual media for broadcast in theatres or on television that focus on passion, emotion, and the affectionate romantic involvement of the main characters.",
-  },
-  {
-    id: "3",
-    name: "Comedy",
-    description:
-      "a genre of fiction that consists of discourses or works intended to be humorous or amusing by inducing laughter",
-  },
-  {
-    id: "4",
-    name: "Isekai",
-    description:
-      " is a genre of speculative fiction—both portal fantasy and science fiction are included. It includes novels, light novels, films, manga, anime and video games that revolve around a displaced person or people who are transported to and have to survive in another world, such as a fantasy world, virtual world, or parallel universe. ",
-  },
-];
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { Form, Link, useNavigate } from "react-router-dom";
+import { Button } from '@mui/material';
+import { config } from "../services/config";
 const GenreItem = (props) => {
+  
   const { data } = props;
-
+  const navigate = useNavigate();
+  const token = useSelector(state=>state.persistedReducer.auth.token.accessToken)
   return (
-    <div className="genreItem">
+    <div className="genreItem" style={{cursor: "pointer"}} onClick={()=>{navigate(`/cpanel/genre/${data._id}/edit`)}}>
+
       <div>Genre: {data.name}</div>
       <div>{data.description} </div>
+
+    <div>
       <button
         type="button"
         className="deleteButton1"
-        onClick={() => {
+        onClick={async (e) => {
+          e.stopPropagation();
             //handle delete here
-          console.log(data.id);
+            let headersList = {
+              Accept: "*/*",
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${token}`,
+            };
+            let reqOptions = {
+              url: `${config.baseURL}/cpanel/genre/${data._id}/delete`,
+              method: "POST",
+              headers: headersList,
+            };
+            try {
+              let response = await axios.request(reqOptions);
+                if(response.data.error==false){
+                  alert(response.data.message);
+                  window.location.reload();
+                }else{
+                  alert(response.data.message);
+                }
+            } catch (error) {
+              console.log("Delete genre error" + error);
+            }
         }}
       >
         X
       </button>
+      </div>
     </div>
   );
 };
 
 export default function Feature() {
+  const [genreData, setgenreData] = useState([]);
+  const token = useSelector(state=>state.persistedReducer.auth.token.accessToken);
+    const getAllGenre = async ()=>{ 
+
+            let headersList = {
+              Accept: "*/*",
+              "Content-Type": "application/json",
+              'Authorization': `Bearer ${token}`,
+            };
+            let reqOptions = {
+              url: `${config.baseURL}/cpanel/genre`,
+              method: "GET",
+              headers: headersList,
+
+            };
+            try {
+              let response = await axios.request(reqOptions);
+              console.log(response.data.data);
+
+              setgenreData(response.data.data);
+            } catch (error) {
+              console.log("Call genre error" + error);
+            }
+          }
+            useEffect(() => {
+              getAllGenre();
+            }, [])
+          
   return (
     <div className="featureContainer">
       <Form className="searchForm" role="search">
@@ -57,14 +90,13 @@ export default function Feature() {
         <input type="search" id="q" name="q" placeholder="Search..." />
       </Form>
       <h2>Feature</h2>
-      <button className="add_genre_button">
-        <Link to={"/genre/add"}>Add a new genre</Link>
-      </button>
+      <Form action="add">
+      <Button sx={{ width: "30%", alignSelf:"center" }} type="submit" variant="contained">Add Genre</Button>
+      </Form>
       <div className="genreContainer">
-        {data.map((item) => (
-          <GenreItem data={item}></GenreItem>
+        {genreData.map((item) => (
+          <GenreItem key={item._id} data={item}></GenreItem>
         ))}
       </div>
     </div>
-  );
-}
+  ); }

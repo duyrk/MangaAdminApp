@@ -4,6 +4,7 @@ import { Form, useNavigate } from 'react-router-dom'
 import { useStateManager } from 'react-select'
 import { useSelector } from 'react-redux'
 import axios from 'axios'
+import { config } from '../services/config'
 const data =[
     {
         "_id":"1",
@@ -69,7 +70,7 @@ export default function Dashboard() {
               'Authorization': `Bearer ${token}`,
             };
             let reqOptions = {
-              url: "http://localhost:3000/cpanel/manga",
+              url: `${config.baseURL}/cpanel/manga`,
               method: "GET",
               headers: headersList,
 

@@ -21,6 +21,7 @@ import { Provider } from "react-redux";
 import { store } from "./assets/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
+import EditGenre from "./routes/editGenre";
 
 const router = createBrowserRouter([
   {
@@ -60,16 +61,16 @@ const router = createBrowserRouter([
         element: <EditChapter></EditChapter>
       },
       {
-        path: "/feature",
+        path: "/cpanel/genre",
         element: <Feature></Feature>,
       },
       {
-        path: "cpanel/genre/add",
+        path: "/cpanel/genre/add",
         element: <AddGenre></AddGenre>,
       },
       {
-        path: "cpanel/genre/:id/genre",
-        element: <AddGenre></AddGenre>,
+        path: "/cpanel/genre/:id/edit",
+        element: <EditGenre></EditGenre>
       },
     ],
   },

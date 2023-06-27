@@ -5,6 +5,7 @@ import {
   loginStart,
   loginSuccess,
 } from "./authSlice";
+import { config } from "../../services/config";
 export const loginUser = async (user, dispatch, navigate) => {
   dispatch(loginStart());
   try {
@@ -13,7 +14,7 @@ export const loginUser = async (user, dispatch, navigate) => {
       "Content-Type": "application/json",
     };
     let reqOptions = {
-      url: "http://localhost:3000/cpanel/login",
+      url: `${config.baseURL}/cpanel/login`,
       method: "POST",
       headers: headersList,
       data: user,
@@ -28,6 +29,7 @@ export const loginUser = async (user, dispatch, navigate) => {
       console.log("Call login error" + error);
     }
   } catch (error) {
+    alert("Username or password is wrong! Please double check again");
     dispatch(loginFailed());
   }
 };
