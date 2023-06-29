@@ -8,19 +8,18 @@ import { storage } from '../assets/firebase';
 import {ref, uploadBytes, getDownloadURL} from "firebase/storage"
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-const options = [
-  { value: 'Action', label: 'Action' },
-  { value: 'Romance', label: 'Romance' },
-  { value: 'Comedy', label: 'Comedy' },
-];
+import { useNavigate } from 'react-router-dom';
 function Add() {
-  const [file, setFile] = useState();
-  const [coverManga, setcoverManga] = useState(null)
-  const [selectedOptions, setselectedOptions] = useState([])
-  const [name, setname] = useState("")
-  const [author, setauthor] = useState("")
-  const [status, setstatus] = useState("")
-  const [language, setlanguage] = useState("")  
+  const [file, setFile] = useState("");
+  const [genre, setgenre] = useState([]);
+  const [coverManga, setcoverManga] = useState(null);
+  const [selectedOptions, setselectedOptions] = useState([]);
+  const [name, setname] = useState("");
+  const [author, setauthor] = useState("");
+  const [status, setstatus] = useState("");
+  const [language, setlanguage] = useState("");
+  const [handleGenre, sethandleGenre] = useState([]);
+  const navigate = useNavigate();
   function handleChange(e) {
     console.log(e.target.files);
     setFile(URL.createObjectURL(e.target.files[0]));
@@ -43,34 +42,119 @@ function Add() {
   const handleUpload = ()=>{
     console.log("alo")
     if(coverManga==null) return;
-    const imageRef = ref(storage, `manga//${coverManga.name + Date.now()}`)
+    const imageRef = ref(storage, `manga/${name}/${"cover"+Date.now()}`)
     uploadBytes(imageRef, coverManga).then((snapshot)=>{
           getDownloadURL(snapshot.ref).then(url=>{
-
+            console.log(url);
+            formatGenre();
+            console.log(handleGenre);
+            addMangaAPI(url);
           })
     })
   }
   const token = useSelector(state=>state.persistedReducer.auth.token.accessToken)
-  const addMangaAPI = async () =>{
+  const validate = () =>{
+    let errorText="";
+    if(file.length==0 && name.length==0 && author.length==0 && language.length==0 && status.length==0 && selectedOptions.length==0){
+      errorText="Các thông tin không được để trống";
+    }
+    if(file.length==0){
+      errorText += "Ảnh bìa không được để trống\n";
+    }
+    if(name.length==0){
+      errorText += "Tên truyện không được để trống\n";
+    }
+    if(author.length==0){
+      errorText += "Tên tác giả không được để trống\n";
+    }
+    if(language.length==0){
+      errorText += "Ngôn ngữ không được để trống\n";
+    }
+    if(status.length==0){
+      errorText += "Trạng thái không được để trống\n";
+    }
+    if(selectedOptions.length==0){
+      errorText += "Thể loại không được để trống\n";
+    }
+    if(errorText.length==0){
+      handleUpload();
+    }else{
+      alert(errorText);
+    }
+  }
+  const uploader = useSelector(state=>state.persistedReducer.auth.login.currentUser._id);
+  const addMangaAPI = async (url) =>{
     let headersList = {
       Accept: "*/*",
       "Content-Type": "application/json",
       'Authorization': `Bearer ${token}`,
     };
     let reqOptions = {
-      url: "http://localhost:3000/cpanel/manga",
+      url: "http://localhost:3000/cpanel/manga/add",
       method: "POST",
       headers: headersList,
-
+      data:{
+        name: name,
+         author: author,
+          language: language,
+           status:status,
+            cover: url,
+             genre: handleGenre,
+              uploader: uploader
+            }
     };
     try {
       let response = await axios.request(reqOptions);
-      alert(response.data.data);
+      if(response.data.error){
+        navigate("/cpanel/dashboard");
+        alert("There is error, try again!");
+      }else{
+        navigate(`/cpanel/manga/${response.data.data._id}/edit`);
+        alert("Upload this comic successfully. Please continue update it");
+      }
 
     } catch (error) {
-      console.log("Call login error" + error);
+      console.log("Add manga error" + error);
     }
   }
+  //format genre when submit
+  const formatGenre = () =>{
+      const tempGenre = [];
+      selectedOptions.forEach(element => {
+          tempGenre.push(element.value);
+      });
+      sethandleGenre(tempGenre);
+  }
+// get genre and format
+ const getGenreAPI = async () =>{
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+    'Authorization': `Bearer ${token}`,
+  };
+  let reqOptions = {
+    url: "http://localhost:3000/cpanel/genre",
+    method: "GET",
+    headers: headersList,
+
+  };
+  try {
+    let response = await axios.request(reqOptions);
+    console.log(response.data.data);
+    const data = response.data.data;
+    const tempGenreData= [];
+    data.forEach(element => {
+      tempGenreData.push( { value: element._id, label: element.name })
+    });
+    setgenre(tempGenreData);
+  } catch (error) {
+    console.log("Get genre error" + error);
+  }
+ }
+useEffect(() => {
+  getGenreAPI();
+}, [])
+
   return (
     <div className='addContainer'>
       <h2>Add Manga</h2>
@@ -103,16 +187,16 @@ function Add() {
         </BoostForm.Select>
       </BoostForm.Group >
       <BoostForm.Group className="mb-3">
-        <BoostForm.Label  className='control-label'>Manga Status:</BoostForm.Label>
+        <BoostForm.Label  className='control-label'>Manga Genres:</BoostForm.Label>
         <MultiSelect
-          options={options}
+          options={genre}
           value={selectedOptions}
           onChange={setselectedOptions}
           labelledBy="Select"
         >
         </MultiSelect>
       </BoostForm.Group >
-      <Button sx={{ width: "100%", marginTop: 5 }} type="submit" variant="contained" onClick={handleUpload}>Submit</Button>
+      <Button sx={{ width: "100%", marginTop: 5 }} type="submit" variant="contained" onClick={validate}>Submit</Button>
 
 
     </div>
