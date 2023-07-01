@@ -5,7 +5,6 @@ import { Form, Link, useNavigate } from "react-router-dom";
 import { Button } from '@mui/material';
 import { config } from "../services/config";
 const GenreItem = (props) => {
-  
   const { data } = props;
   const navigate = useNavigate();
   const token = useSelector(state=>state.persistedReducer.auth.token.accessToken)
@@ -14,7 +13,6 @@ const GenreItem = (props) => {
 
       <div>Genre: {data.name}</div>
       <div>{data.description} </div>
-
     <div>
       <button
         type="button"
