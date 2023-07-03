@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux';
 import { config } from '../services/config';
 import axios from 'axios';
 import { isObjEmpty } from '../util/isObjEmpty';
+import { storage } from '../assets/firebase';
+import {ref, uploadBytes, getDownloadURL, deleteObject, list, listAll} from "firebase/storage"
 const options = [
     { value: 'Action', label: 'Action' },
     { value: 'Romance', label: 'Romance' },
@@ -89,6 +91,7 @@ const data1 = [
 ]
 function Edit() {
     const [file, setFile] = useState("");
+    const [coverManga, setcoverManga] = useState(null);
     const [selectedOptions, setselectedOptions] = useState([])
     const [name, setname] = useState("")
     const [author, setauthor] = useState("")
@@ -96,17 +99,20 @@ function Edit() {
     const [status, setstatus] = useState("")
     const [genre, setgenre] = useState([]); // genre value to select
     const [handleGenre, sethandleGenre] = useState([]); // for post api
+    const [constGenre, setconstGenre] = useState([])
     const [characaterData, setcharacaterData] = useState([]);
-
     const [data, setdata] = useState({});
     const [handleSelected_og, sethandleSelected_og] = useState(false); //for selected on going
     const [handleSelected_fn, sethandleSelected_fn] = useState(false);//for selected finished
     const [handleSelected_cn, sethandleSelected_cn] = useState(false);//for selected cancelled
+    const [handleDisabled, sethandleDisabled] = useState(true);
     const { mangaId } = useParams();
     const navigate = useNavigate();
+    const token = useSelector(state=>state.persistedReducer.auth.token.accessToken);
     function handleChange(e) {
         console.log(e.target.files);
         setFile(URL.createObjectURL(e.target.files[0]));
+        setcoverManga(e.target.files[0]);
     }
     function handleName(e){
         console.log(e.target.value);
@@ -122,10 +128,91 @@ function Edit() {
         console.log(e.target.value);
         setstatus(e.target.value);
       }
-      function Submit(){
-        console.log("submited")
+      const validate = () =>{
+        let errorText="";
+        if(file.length==0 && name.length==0 && author.length==0 && language.length==0 && status.length==0 && selectedOptions.length==0){
+          errorText="Các thông tin không được để trống";
+        }
+        if(file.length==0){
+          errorText += "Ảnh bìa không được để trống\n";
+        }
+        if(name.length==0){
+          errorText += "Tên truyện không được để trống\n";
+        }
+        if(author.length==0){
+          errorText += "Tên tác giả không được để trống\n";
+        }
+        if(language.length==0){
+          errorText += "Ngôn ngữ không được để trống\n";
+        }
+        if(status.length==0){
+          errorText += "Trạng thái không được để trống\n";
+        }
+        if(selectedOptions.length==0){
+          errorText += "Thể loại không được để trống\n";
+        }
+        if(errorText.length==0){
+          Submit();
+        }else{
+          alert(errorText);
+        }
       }
-      const token = useSelector(state=>state.persistedReducer.auth.token.accessToken);
+  const uploadImage = () =>{
+    const bannerRef = ref(storage, `manga/${name}/banner/`);
+    listAll(bannerRef).then((res)=>{
+      res.items.forEach((item)=>{
+        deleteObject(item);
+      })
+    }).catch((error)=>{
+      console.log(error)
+    })
+    if(coverManga==null) return;
+    const imageRef = ref(storage, `manga/${name}/banner/${Date.now()}`)
+    uploadBytes(imageRef, coverManga).then((snapshot)=>{
+          getDownloadURL(snapshot.ref).then(url=>{
+            updateMangaAPI(url);
+          })
+    })
+  }    
+ const updateMangaAPI = async (url) => {
+  let headersList = {
+    Accept: "*/*",
+    "Content-Type": "application/json",
+    'Authorization': `Bearer ${token}`,
+  };
+  let reqOptions = {
+    url: `${config.baseURL}/cpanel/manga/${mangaId}/edit`,
+    method: "POST",
+    headers: headersList,
+    data:{
+      updates:{
+        name: name,
+        author: author,
+         language: language,
+          status:status,
+           cover: url,
+            genre: formatGenre(),
+      }
+    }
+  };
+  try {
+    let response = await axios.request(reqOptions);
+     alert(response.data.message);   
+     window.location.reload();
+  } catch (error) {
+    alert("Something went wrong! Try again");   
+    window.location.reload();
+  }
+ } 
+  const Submit = async ()=>{
+    if(file!=data.cover){
+      uploadImage();
+    }else{
+      updateMangaAPI(file);
+    }
+
+    
+      }
       const getDataToEdit = async () =>{
         let headersList = {
             Accept: "*/*",
@@ -141,8 +228,8 @@ function Edit() {
             let response = await axios.request(reqOptions);
                 setdata(response.data.data);        
           } catch (error) {
-            // alert("Error! Some error occurs, The manga might not be found! Please try again");
-            // navigate("/cpanel/dashboard");
+            alert("Error! Something went wrong :( , The manga might not be found! Please try again");
+            navigate("/cpanel/dashboard");
           }
       }
       const setDataOnSite = () =>{
@@ -157,15 +244,23 @@ function Edit() {
             tempGenre.push({value: element._id, label:element.name});
         });
         setselectedOptions(tempGenre);
+        setconstGenre(tempGenre);
+        if(data.status=="On Going"){
+          sethandleSelected_og(true);
+        }else if(data.status=="Finished"){
+          sethandleSelected_fn(true)
+        }else{
+          sethandleSelected_cn(true);
+        }
       }
       //format genre when submit
-  const formatGenre = () =>{
-    const tempGenre = [];
-    selectedOptions.forEach(element => {
-        tempGenre.push(element.value);
-    });
-    sethandleGenre(tempGenre);
-}
+      const formatGenre = () =>{
+        const tempGenre = [];
+        selectedOptions.forEach(element => {
+            tempGenre.push(element.value);
+        });
+       return tempGenre;
+    }
 // get genre and format
 const getGenreAPI = async () =>{
 let headersList = {
@@ -200,10 +295,47 @@ try {
         //fetch data when it's available 
        if(!isObjEmpty(data)) setDataOnSite();
       }, [data])
+      useEffect(() => {
+        if(!isObjEmpty(data)){
+          let anyChange = false;
+      if(file!=data.cover){
+         sethandleDisabled(false);
+         anyChange=true;
+         console.log("1");
+      }
+      if(name!=data.name){
+        sethandleDisabled(false);
+        anyChange=true;
+        console.log("2");
+     }
+      if(author!=data.author){
+        sethandleDisabled(false);
+        anyChange=true;
+        console.log("3");
+     }
+      if(language!=data.language){
+        sethandleDisabled(false);
+        anyChange=true;
+        console.log("4");
+     }
+      if(status!=data.status){
+        sethandleDisabled(false);
+        anyChange=true;
+        console.log("5");
+     }
+      if(selectedOptions!=constGenre){
+        sethandleDisabled(false);
+        anyChange=true;
+        console.log("6");
+     }
+     if(anyChange==false){
+      sethandleDisabled(true);
+     }
+    }
+      }, [file, name, author, language, status, selectedOptions])
       
     return (
         <div className='editContainer'>
-  
                 <div className='addContainer'>
                     <h2>Edit Manga</h2>
                     <img className='manga-cover' src={file} />
@@ -228,9 +360,9 @@ try {
                         <BoostForm.Label  className='control-label'>Manga Status:</BoostForm.Label>
                         <BoostForm.Select aria-label="Default select example" onChange={handlestatus} >
                             <option>Status</option>
-                            <option  value="On Going">On Going</option>
-                            <option value="Finished">Finished</option>
-                            <option value="Canceled">Canceled</option>
+                            <option value="On Going" selected={handleSelected_og}>On Going</option>
+                            <option value="Finished" selected={handleSelected_fn}>Finished</option>
+                            <option value="Canceled" selected={handleSelected_cn}>Canceled</option>
                         </BoostForm.Select>
                     </BoostForm.Group >
                     <BoostForm.Group className="mb-3">
@@ -243,7 +375,7 @@ try {
         >
         </MultiSelect>
       </BoostForm.Group >
-    <Button sx={{ width: "50%", alignSelf: "center" }} type="button" variant="contained"  onClick={Submit}>Submit</Button>
+    <Button sx={{ width: "50%", alignSelf: "center" }} type="button" variant="contained"  onClick={validate} disabled={handleDisabled}>Submit</Button>
                 </div>
                 <div className='characterContainer'>
                     <div className='characterSection'>

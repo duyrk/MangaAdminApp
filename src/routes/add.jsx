@@ -2,7 +2,6 @@
 import { Button } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { Form as BoostForm } from 'react-bootstrap';
-
 import { MultiSelect } from 'react-multi-select-component';
 import { storage } from '../assets/firebase';
 import {ref, uploadBytes, getDownloadURL} from "firebase/storage"
@@ -18,7 +17,6 @@ function Add() {
   const [author, setauthor] = useState("");
   const [status, setstatus] = useState("");
   const [language, setlanguage] = useState("");
-  const [handleGenre, sethandleGenre] = useState([]);
   const navigate = useNavigate();
   function handleChange(e) {
     console.log(e.target.files);
@@ -40,14 +38,10 @@ function Add() {
     setstatus(e.target.value);
   }
   const handleUpload = ()=>{
-    console.log("alo")
     if(coverManga==null) return;
-    const imageRef = ref(storage, `manga/${name}/${"cover"+Date.now()}`)
+    const imageRef = ref(storage, `manga/${name}/banner/${Date.now()}`)
     uploadBytes(imageRef, coverManga).then((snapshot)=>{
           getDownloadURL(snapshot.ref).then(url=>{
-            console.log(url);
-            formatGenre();
-            console.log(handleGenre);
             addMangaAPI(url);
           })
     })
@@ -99,7 +93,7 @@ function Add() {
           language: language,
            status:status,
             cover: url,
-             genre: handleGenre,
+             genre: formatGenre(),
               uploader: uploader
             }
     };
@@ -123,7 +117,8 @@ function Add() {
       selectedOptions.forEach(element => {
           tempGenre.push(element.value);
       });
-      sethandleGenre(tempGenre);
+     return tempGenre;
+
   }
 // get genre and format
  const getGenreAPI = async () =>{
@@ -154,13 +149,14 @@ function Add() {
 useEffect(() => {
   getGenreAPI();
 }, [])
+useEffect(() => {
+  console.log(selectedOptions);
+}, [selectedOptions])
 
   return (
     <div className='addContainer'>
       <h2>Add Manga</h2>
       <img className='manga-cover' src={file} />
-
-
       <BoostForm.Group controlId="formFile" className="mb-3">
         <BoostForm.Label  className='control-label'>Cover Image for the manga:</BoostForm.Label>
         <BoostForm.Control type="file" required onChange={handleChange} />
