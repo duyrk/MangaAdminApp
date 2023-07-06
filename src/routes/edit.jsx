@@ -6,89 +6,14 @@ import { Form, Link, useNavigate, useParams } from 'react-router-dom';
 import ChapterItem from './items/chapterItem';
 import { MultiSelect } from 'react-multi-select-component';
 import CharacterItem from './items/characterItem';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { config } from '../services/config';
 import axios from 'axios';
 import { isObjEmpty } from '../util/isObjEmpty';
 import { storage } from '../assets/firebase';
 import {ref, uploadBytes, getDownloadURL, deleteObject, list, listAll} from "firebase/storage"
-const options = [
-    { value: 'Action', label: 'Action' },
-    { value: 'Romance', label: 'Romance' },
-    { value: 'Comedy', label: 'Comedy' },
-  ];
-  
+import { mangaData } from '../assets/redux/mangaSlice';
 
-const data1 = [
-    {
-        "_id": 1,
-        "chapterName": "An Accident",
-        "chapterNumber": 1
-
-    },
-    {
-        "_id": 2,
-        "chapterName": "An Accident",
-        "chapterNumber": 2
-
-    },
-    ,
-    {
-        "_id": 3,
-        "chapterName": "An Accident",
-        "chapterNumber": 3
-
-    },
-    ,
-    {
-        "_id": 4,
-        "chapterName": "An Accident",
-        "chapterNumber": 4
-
-    },
-    ,
-    {
-        "_id": 5,
-        "chapterName": "An Accident",
-        "chapterNumber": 5
-
-    },
-    ,
-    {
-        "_id": 6,
-        "chapterName": "An Accident",
-        "chapterNumber": 6
-
-    },
-    ,
-    {
-        "_id": 7,
-        "chapterName": "An Accident",
-        "chapterNumber": 7
-
-    },
-    ,
-    {
-        "_id": 8,
-        "chapterName": "An Accident",
-        "chapterNumber": 8
-
-    },
-    ,
-    {
-        "_id": 9,
-        "chapterName": "An Accident",
-        "chapterNumber": 9
-
-    },
-    ,
-    {
-        "_id": 10,
-        "chapterName": "An Accident",
-        "chapterNumber": 10
-
-    },
-]
 function Edit() {
     const [file, setFile] = useState("");
     const [coverManga, setcoverManga] = useState(null);
@@ -100,7 +25,8 @@ function Edit() {
     const [genre, setgenre] = useState([]); // genre value to select
     const [handleGenre, sethandleGenre] = useState([]); // for post api
     const [constGenre, setconstGenre] = useState([])
-    const [characaterData, setcharacaterData] = useState([]);
+    const [characterData, setcharacterData] = useState([]);
+    const [chapterData, setchapterData] = useState([]);
     const [data, setdata] = useState({});
     const [handleSelected_og, sethandleSelected_og] = useState(false); //for selected on going
     const [handleSelected_fn, sethandleSelected_fn] = useState(false);//for selected finished
@@ -108,6 +34,7 @@ function Edit() {
     const [handleDisabled, sethandleDisabled] = useState(true);
     const { mangaId } = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const token = useSelector(state=>state.persistedReducer.auth.token.accessToken);
     function handleChange(e) {
         console.log(e.target.files);
@@ -226,7 +153,8 @@ function Edit() {
           };
           try {
             let response = await axios.request(reqOptions);
-                setdata(response.data.data);        
+                setdata(response.data.data);
+                dispatch(mangaData(response.data.data));
           } catch (error) {
             alert("Error! Something went wrong :( , The manga might not be found! Please try again");
             navigate("/cpanel/dashboard");
@@ -252,6 +180,8 @@ function Edit() {
         }else{
           sethandleSelected_cn(true);
         }
+        setcharacterData(data.character);
+        setchapterData(data.chapter);
       }
       //format genre when submit
       const formatGenre = () =>{
@@ -380,15 +310,15 @@ try {
                 <div className='characterContainer'>
                     <div className='characterSection'>
                         <h3>Characters</h3>
-                        <button className="add_genre_button">
-        <Link to={"/cpanel/manga/1/edit/characters"}>Add Characters</Link>
-      </button>
+                        <Form action='characters'>
+                        <Button type="submit" variant="contained">ADD CHARACTER</Button>
+                    </Form>
                     </div>
                     <div className='characterItemContainer'>
-                        
-                    <CharacterItem></CharacterItem>
-                 <CharacterItem></CharacterItem>
-                 <CharacterItem></CharacterItem>
+                 { 
+                 characterData.length==0 ? <h2 style={{color:'white', width:'100%', textAlign:'center'}}>No character ...</h2> :
+                 characterData.map(item => <CharacterItem data={item} key={item._id}></CharacterItem>)
+                 }
                     </div>
                
                 </div>
@@ -415,7 +345,8 @@ try {
 
 
                     {
-                        data1.map(item => <ChapterItem key={item._id} data={item}></ChapterItem>)
+                      chapterData.length==0 ?  <h2 style={{color:'white', width:'100%', textAlign:'center', marginTop:'20px'}}>No chapter ...</h2> :
+                        chapterData.map(item => <ChapterItem key={item._id} data={item}></ChapterItem>)
                     }
                 </div>
             </div>
