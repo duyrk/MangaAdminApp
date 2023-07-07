@@ -1,10 +1,12 @@
 import { Button } from '@mui/material';
 import React, { useEffect, useState } from 'react'
 import { Form as BoostForm } from 'react-bootstrap';
-import { Form } from 'react-router-dom';
+import { Form, useNavigate, useParams } from 'react-router-dom';
 import { storage } from '../assets/firebase';
 import {ref, uploadBytes, getDownloadURL} from "firebase/storage"
 import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { config } from '../services/config';
 function Addchapter() {
   const [selectedImages, setselectedImages] = useState([])
   const [selectedFile, setselectedFile] = useState([])
@@ -13,6 +15,8 @@ function Addchapter() {
   const [pages, setpages] = useState([]);
   const token = useSelector(state=>state.persistedReducer.auth.token.accessToken);
   const mangaName = useSelector(state=>state.persistedReducer.manga.detail.currentData.name);
+  const { mangaId } = useParams();
+  const navigate = useNavigate();
   function handleTitle(e) {
     settitle(e.target.value);
   }
@@ -49,9 +53,6 @@ function Addchapter() {
      }
    
   }
-  const Submit = () =>{
-
-  }
   const validate = () =>{
     let errorText="";
     if(title.length==0 && chapterNumber.length==0 && selectedImages.length==0){
@@ -71,18 +72,42 @@ function Addchapter() {
       }
     }
     if(errorText.length==0){
-      // Submit();
       UploadImagesToFirebase();
     }else{
       alert(errorText);
     }
   }
+  const AddChapterAPI = async () =>{
+    let headersList = {
+      Accept: "*/*",
+      "Content-Type": "application/json",
+      'Authorization': `Bearer ${token}`,
+    };
+    let reqOptions = {
+      url: `${config.baseURL}/cpanel/manga/${mangaId}/edit/add-chapter`,
+      method: "POST",
+      headers: headersList,
+      data:{
+       title:title,
+       chapterNumber: chapterNumber,
+       page: pages
+      }
+    };
+    try {
+      let response = await axios.request(reqOptions);
+      alert(response.data.message);
+      navigate(`/cpanel/manga/${mangaId}/edit/`);
+    } catch (error) {
+      console.log("Add character error"+error);
+      alert("Error! Something went wrong. Manga id might not be found. Please try again");
+      navigate(`/cpanel/manga/${mangaId}/edit/`);
+    }
+  }
     useEffect(() => {
       // check that all of the images are uploaded or not
       if(pages.length==selectedFile.length && pages.length!=0){
-          alert("Uploaded to firebase, ready to upload");
           pages.sort(function(a,b){return a.id - b.id});
-          console.log(pages);
+          AddChapterAPI();
       }
     }, [pages])
     
