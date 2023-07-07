@@ -1,7 +1,7 @@
 <h2>Project Name:</h2>
 <p>Manga Admin App</p>
 <h2>Description:</h2>
-<p>An admin cotrol panel for the <a src={"https://github.com/duyrk/MangaApp"}>Manga App</a></p>
+<p>An admin control panel for the <a src={"https://github.com/duyrk/MangaApp"}>Manga App</a></p>
 <h2>Features:</h2>
 <ul>
   <li>Get a list of the manga from the database</li>
