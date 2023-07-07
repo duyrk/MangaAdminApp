@@ -1,7 +1,7 @@
 <h2>Project Name:</h2>
 <p>Manga Admin App</p>
 <h2>Description:</h2>
-<p>An admin control panel for the <a src={"https://github.com/duyrk/MangaApp"}>Manga App</a></p>
+<p>An admin control panel for the [Manga App](https://github.com/duyrk/MangaApp)</p>
 <h2>Features:</h2>
 <ul>
   <li>Get a list of the manga from the database</li>
@@ -19,7 +19,7 @@
   <li>MongoDB</li>
 </ul>
 <h2>Authors:</h2>
-<p><a src={"https://github.com/duyrk"}>duyrk</a></p>
+<p>[duyrk](https://github.com/duyrk)</p>
 
 
 
