@@ -5,10 +5,12 @@ import { useNavigate } from 'react-router-dom';
 function MangaInfoItem(props) {
   const {data} = props;
   console.log(data.name);
+  
   const navigate =useNavigate();
   const goToEdit = () =>{
     navigate(`/cpanel/manga/${data._id}/edit`)
   }
+
   return (
 
     <div className='itemContainer-info'>
@@ -24,8 +26,8 @@ function MangaInfoItem(props) {
             <h4>Views: {data.views}</h4>
           </div>
           <div>
-          <h4>Uploader: {data.uploader.user_name}</h4>
-            <h4>Lastest Chapter: {data.chapter.length > 0 ? data.chapter[0].chapter_number : 0}</h4>
+          {/* <h4>Uploader: {data.uploader.user_name}</h4> */}
+            <h4>Lastest Chapter: {data.chapter.length > 0 ? data.chapter[data.chapter.length-1].chapter_number : 0}</h4>
           
            
           </div>

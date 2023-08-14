@@ -16,17 +16,21 @@ import { mangaData } from '../assets/redux/mangaSlice';
 
 function Edit() {
     const [file, setFile] = useState("");
+    const [bannerfile, setbannerfile] = useState("")
     const [coverManga, setcoverManga] = useState(null);
+    const [bannerManga, setbannerManga] = useState(null);
     const [selectedOptions, setselectedOptions] = useState([])
     const [name, setname] = useState("")
     const [author, setauthor] = useState("")
     const [language, setlanguage] = useState("")
     const [status, setstatus] = useState("")
+    const [description, setdescription] = useState("")
     const [genre, setgenre] = useState([]); // genre value to select
     const [handleGenre, sethandleGenre] = useState([]); // for post api
     const [constGenre, setconstGenre] = useState([])
     const [characterData, setcharacterData] = useState([]);
     const [chapterData, setchapterData] = useState([]);
+ 
     const [data, setdata] = useState({});
     const [handleSelected_og, sethandleSelected_og] = useState(false); //for selected on going
     const [handleSelected_fn, sethandleSelected_fn] = useState(false);//for selected finished
@@ -41,6 +45,11 @@ function Edit() {
         setFile(URL.createObjectURL(e.target.files[0]));
         setcoverManga(e.target.files[0]);
     }
+    function handleChangeBanner(e) {
+      console.log(e.target.files);
+      setbannerfile(URL.createObjectURL(e.target.files[0]));
+      setbannerManga(e.target.files[0]);
+  }
     function handleName(e){
         console.log(e.target.value);
         setname(e.target.value);
@@ -55,9 +64,13 @@ function Edit() {
         console.log(e.target.value);
         setstatus(e.target.value);
       }
+      function handleDescription(e){
+        console.log(e.target.value);
+        setdescription(e.target.value);
+      }
       const validate = () =>{
         let errorText="";
-        if(file.length==0 && name.length==0 && author.length==0 && language.length==0 && status.length==0 && selectedOptions.length==0){
+        if(file.length==0 && bannerfile.length==0 && name.length==0 && author.length==0 && language.length==0 && status.length==0 && selectedOptions.length==0 && description.length==0){
           errorText="Các thông tin không được để trống";
         }
         if(file.length==0){
@@ -78,6 +91,12 @@ function Edit() {
         if(selectedOptions.length==0){
           errorText += "Thể loại không được để trống\n";
         }
+        if(bannerfile.length==0){
+          errorText += "Ảnh bìa 2 không được để trống\n";
+        }
+        if(description.length==0){
+          errorText += "Mô tả không được để trống\n";
+        }
         if(errorText.length==0){
           Submit();
         }else{
@@ -85,8 +104,8 @@ function Edit() {
         }
       }
   const uploadImage = () =>{
-    const bannerRef = ref(storage, `manga/${name}/banner/`);
-    listAll(bannerRef).then((res)=>{
+    const coverRef = ref(storage, `manga/${name}/banner/`);
+    listAll(coverRef).then((res)=>{
       res.items.forEach((item)=>{
         deleteObject(item);
       })
@@ -97,11 +116,63 @@ function Edit() {
     const imageRef = ref(storage, `manga/${name}/banner/${Date.now()}`)
     uploadBytes(imageRef, coverManga).then((snapshot)=>{
           getDownloadURL(snapshot.ref).then(url=>{
-            updateMangaAPI(url);
+            updateMangaAPI(url, bannerfile); //cover - banner
           })
     })
   }    
- const updateMangaAPI = async (url) => {
+  const uploadImage2 = () =>{
+    const bannerRef = ref(storage, `manga/${name}/bannerLongWidth/`);
+    listAll(bannerRef).then((res)=>{
+      res.items.forEach((item)=>{
+        deleteObject(item);
+      })
+    }).catch((error)=>{
+      console.log(error)
+    })
+    if(bannerManga==null) return;
+    const imageRef = ref(storage, `manga/${name}/bannerLongWidth/${Date.now()}`)
+    uploadBytes(imageRef, bannerManga).then((snapshot)=>{
+          getDownloadURL(snapshot.ref).then(url=>{
+            updateMangaAPI(file, url); //cover - banner
+          })
+    })
+  }
+  const uploadImage3 = ()=>{
+    
+    const coverRef = ref(storage, `manga/${name}/banner/`);
+    listAll(coverRef).then((res)=>{
+      res.items.forEach((item)=>{
+        deleteObject(item);
+      })
+    }).catch((error)=>{
+      console.log(error)
+    })
+    const bannerRef = ref(storage, `manga/${name}/bannerLongWidth/`);
+    listAll(bannerRef).then((res)=>{
+      res.items.forEach((item)=>{
+        deleteObject(item);
+      })
+    }).catch((error)=>{
+      console.log(error)
+    })
+    if(coverManga==null) return;
+    if(bannerManga==null) return;
+    const imageRef = ref(storage, `manga/${name}/banner/${Date.now()}`)
+    uploadBytes(imageRef, coverManga).then((snapshot)=>{
+          getDownloadURL(snapshot.ref).then(url=>{
+            upload(url);
+          })
+    })
+    const upload = (coverUrl)=>{
+      const imageRef2 = ref(storage, `manga/${name}/bannerLongWidth/${Date.now()}`)
+      uploadBytes(imageRef2, bannerManga).then((snapshot)=>{
+            getDownloadURL(snapshot.ref).then(url=>{
+              updateMangaAPI(coverUrl, url); //cover - banner
+            })
+      })
+    }
+  }
+ const updateMangaAPI = async (coverUrl, bannerUrl) => {
   let headersList = {
     Accept: "*/*",
     "Content-Type": "application/json",
@@ -115,13 +186,16 @@ function Edit() {
       updates:{
         name: name,
         author: author,
-         language: language,
-          status:status,
-           cover: url,
-            genre: formatGenre(),
+        language: language,
+        status:status,
+        description:description,
+        cover: coverUrl,
+        banner: bannerUrl,
+        genre: formatGenre(),
       }
     }
   };
+
   try {
     let response = await axios.request(reqOptions);
      alert(response.data.message);   
@@ -132,10 +206,16 @@ function Edit() {
   }
  } 
   const Submit = async ()=>{
-    if(file!=data.cover){
-      uploadImage();
+    if(file!=data.cover || bannerfile!=data.banner){
+      if(file!=data.cover && bannerfile==data.banner){
+        uploadImage();
+      }else if(bannerfile!=data.banner && file==data.cover){
+        uploadImage2();
+      }else{
+        uploadImage3();
+      }
     }else{
-      updateMangaAPI(file);
+      updateMangaAPI(file, bannerfile);
     }
 
     
@@ -166,7 +246,8 @@ function Edit() {
         setauthor(data.author);
         setlanguage(data.language);
         setstatus(data.status);
-
+        setbannerfile(data.banner);
+        setdescription(data.description);
         const tempGenre = [];
         data.genre.forEach(element => {
             tempGenre.push({value: element._id, label:element.name});
@@ -231,48 +312,54 @@ try {
       if(file!=data.cover){
          sethandleDisabled(false);
          anyChange=true;
-         console.log("1");
       }
+      if(bannerfile!=data.banner){
+        sethandleDisabled(false);
+        anyChange=true;    
+     }
       if(name!=data.name){
         sethandleDisabled(false);
-        anyChange=true;
-        console.log("2");
+        anyChange=true;   
      }
       if(author!=data.author){
         sethandleDisabled(false);
-        anyChange=true;
-        console.log("3");
+        anyChange=true;    
      }
       if(language!=data.language){
         sethandleDisabled(false);
-        anyChange=true;
-        console.log("4");
+        anyChange=true;    
      }
       if(status!=data.status){
         sethandleDisabled(false);
-        anyChange=true;
-        console.log("5");
+        anyChange=true;   
      }
       if(selectedOptions!=constGenre){
         sethandleDisabled(false);
-        anyChange=true;
-        console.log("6");
+        anyChange=true;    
      }
+     if(description!=data.description){
+      sethandleDisabled(false);
+      anyChange=true;  
+   }
      if(anyChange==false){
       sethandleDisabled(true);
      }
     }
-      }, [file, name, author, language, status, selectedOptions])
+      }, [file, bannerfile, name, author, language, status, selectedOptions, description])
       
     return (
         <div className='editContainer'>
                 <div className='addContainer'>
                     <h2>Edit Manga</h2>
                     <img className='manga-cover' src={file} />
-
                     <BoostForm.Group controlId="formFile" className="mb-3">
                         <BoostForm.Label  className='control-label'>Cover Image for the manga:</BoostForm.Label>
                         <BoostForm.Control type="file" onChange={handleChange} />
+                    </BoostForm.Group>
+                    <img className='manga-banner' src={bannerfile} />
+                    <BoostForm.Group controlId="formFile" className="mb-3">
+                        <BoostForm.Label  className='control-label'>Banner Image for the manga:</BoostForm.Label>
+                        <BoostForm.Control type="file" onChange={handleChangeBanner} />
                     </BoostForm.Group>
                     <BoostForm.Group className="mb-3">
                         <BoostForm.Label  className='control-label'>Manga Name:</BoostForm.Label>
@@ -286,6 +373,10 @@ try {
                         <BoostForm.Label  className='control-label'>Language:</BoostForm.Label>
                         <BoostForm.Control type="text" placeholder="Language..." onChange={handleLanguage} value={language}/>
                     </BoostForm.Group>
+                    <BoostForm.Group className="mb-3">
+                        <BoostForm.Label  className='control-label'>Description:</BoostForm.Label>
+                        <BoostForm.Control as={"textarea"} rows={3} placeholder="Description..." onChange={handleDescription} value={description}/>
+                     </BoostForm.Group>
                     <BoostForm.Group className="mb-3">
                         <BoostForm.Label  className='control-label'>Manga Status:</BoostForm.Label>
                         <BoostForm.Select aria-label="Default select example" onChange={handlestatus} >

@@ -127,6 +127,12 @@
   object-fit: cover;
   border: 2px white solid;
 }
+.manga-banner {
+  width: 500px;
+  height: 200px;
+  object-fit: cover;
+  border: 2px white solid;
+}
 .add-form {
   display: flex;
   flex-direction: column;
